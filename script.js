@@ -1,5 +1,4 @@
 'use strict';
-
 class Workout {
   date = new Date();
 
@@ -213,21 +212,6 @@ class App {
     this.#popups.push(marker)
   };
 
-  _renderDeleteAllOption() {
-    if(document.querySelector('.workout__delete--all')) return;
-    if(document.querySelectorAll('.workout').length < 1) return;
-    const html = `
-      <div class="workout__delete--all">
-        <button type="button" class="btn__delete--all">
-        <span class="tooltip" title="Clear all workouts">Clear all</span>
-        </button>
-      </div>
-    `;
-    containerWorkouts.insertAdjacentHTML('beforeend', html);
-    document.querySelector('.btn__delete--all').addEventListener(
-      'click', this._deleteAllWorkouts.bind(this));
-  };
-
   // Render workout on map as marker
   _renderWorkout(workout) {
     let html = `
@@ -287,12 +271,52 @@ class App {
           </li>
             `;
 
-      this._renderDeleteAllOption()
+      this._renderSortAndDeleteOptions()
       form.insertAdjacentHTML('afterend', html);
   };
 
+  _renderSortAndDeleteOptions(e) {
+    console.log('sort option ran');
+    if(document.querySelector('.workout__sort') ||
+    document.querySelectorAll('.workout').length < 1) return;
+
+    const htmlSort = `
+    <div class="dropdown workout__sort">
+      <button class="dropbtn btn__sort"> Sort </button>
+      <div class="dropdown-content">
+        <a href="#">Running</a>
+        <a href="#">Cycling</a>
+      </div>
+    </div>
+    `;
+
+    const htmlDelete = `
+    <div class="workout__delete--all">
+      <button type="button" class="btn__delete--all">
+      <span class="tooltip" title="Clear all workouts">Clear all</span>
+      </button>
+    </div>
+    `;
+
+  containerWorkouts.insertAdjacentHTML('beforebegin', htmlSort);
+  document.querySelector('.btn__sort').addEventListener(
+    'click', this._sortWorkouts.bind(this));
+
+  containerWorkouts.insertAdjacentHTML('beforeend', htmlDelete);
+  document.querySelector('.btn__delete--all').addEventListener(
+    'click', this._deleteAllWorkouts.bind(this));
+  }
+
+  _sortWorkouts(e) {
+    console.log();
+  }
+
   _deleteWorkout(e) {
     e.stopPropagation()
+
+    if (!e.target.classList.contains('workout__delete')) {
+      return;
+    }
 
     const workoutEl = e.target.closest('.workout');
     const id = workoutEl.getAttribute('data-id')
@@ -304,7 +328,6 @@ class App {
         pos = i;
       };
     });
-
 
     // Remove the popup from the map
     this.#map.removeLayer(this.#popups[pos]);
@@ -326,6 +349,7 @@ class App {
     this.#workouts = []
     this._refreshLocalStorage()
     document.querySelector('.workout__delete--all').remove()
+    document.querySelector('.workout__sort').remove()
   };
 
   _beginEdit(e) {
@@ -448,7 +472,7 @@ class App {
 
   _moveToPopup(e) {
     const workoutEl = e.target.closest('.workout');
-    if(!workoutEl) return;
+    if (!workoutEl || e.target.classList.contains('workout__delete')) return;
 
     const workout = this.#workouts.find(
       work => work.id === workoutEl.dataset.id
