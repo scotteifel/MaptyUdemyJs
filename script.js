@@ -271,21 +271,20 @@ class App {
           </li>
             `;
 
-      this._renderSortAndDeleteOptions()
+      this._renderSortAndDeleteButtons()
       form.insertAdjacentHTML('afterend', html);
   };
 
-  _renderSortAndDeleteOptions(e) {
-    console.log('sort option ran');
+  _renderSortAndDeleteButtons(e) {
     if(document.querySelector('.workout__sort') ||
     document.querySelectorAll('.workout').length < 1) return;
 
     const htmlSort = `
     <div class="dropdown workout__sort">
       <button class="dropbtn btn__sort"> Sort </button>
-      <div class="dropdown-content">
-        <a href="#">Running</a>
-        <a href="#">Cycling</a>
+      <div class="dropdown__content">
+        <a href="#" class="option__running">Running</a>
+        <a href="#" class="option__cycling">Cycling</a>
       </div>
     </div>
     `;
@@ -298,17 +297,20 @@ class App {
     </div>
     `;
 
-  containerWorkouts.insertAdjacentHTML('beforebegin', htmlSort);
-  document.querySelector('.btn__sort').addEventListener(
-    'click', this._sortWorkouts.bind(this));
+    containerWorkouts.insertAdjacentHTML('beforebegin', htmlSort);
+    document.querySelector('.dropdown__content').addEventListener(
+      'click', this._sortWorkouts.bind(this));
 
-  containerWorkouts.insertAdjacentHTML('beforeend', htmlDelete);
-  document.querySelector('.btn__delete--all').addEventListener(
-    'click', this._deleteAllWorkouts.bind(this));
-  }
+    containerWorkouts.insertAdjacentHTML('beforeend', htmlDelete);
+    document.querySelector('.btn__delete--all').addEventListener(
+      'click', this._deleteAllWorkouts.bind(this));
+    }
 
   _sortWorkouts(e) {
-    console.log();
+    if (e.target.classList.contains('option__running')) {
+      
+    }
+    
   }
 
   _deleteWorkout(e) {
