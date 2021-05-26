@@ -276,12 +276,12 @@ class App {
   };
 
   _renderSortAndDeleteButtons(e) {
-    if(document.querySelector('.workout__sort') ||
+    if(document.querySelector('.dropdown__sort') ||
     document.querySelectorAll('.workout').length < 1) return;
 
     const htmlSort = `
-    <div class="dropdown workout__sort">
-      <button class="dropbtn btn__sort"> Sort </button>
+    <div class="dropdown__sort">
+      <button class="btn__sort"> Sort </button>
       <div class="dropdown__content">
         <a href="#" class="option__running">Running</a>
         <a href="#" class="option__cycling">Cycling</a>
@@ -297,20 +297,41 @@ class App {
     </div>
     `;
 
-    containerWorkouts.insertAdjacentHTML('beforebegin', htmlSort);
+    containerWorkouts.insertAdjacentHTML('afterbegin', htmlSort);
     document.querySelector('.dropdown__content').addEventListener(
-      'click', this._sortWorkouts.bind(this));
+      'click', this._sortWorkouts.bind(this), function() {document.querySelector('.dropdown__content').style.display = "block"
+      });
+
+    document.querySelector('.dropdown__sort').addEventListener('click', this.openDropdown)
 
     containerWorkouts.insertAdjacentHTML('beforeend', htmlDelete);
     document.querySelector('.btn__delete--all').addEventListener(
       'click', this._deleteAllWorkouts.bind(this));
-    }
+    };
+
+    openDropdown = () => document.querySelector(".dropdown__content").classList.toggle("show")
 
   _sortWorkouts(e) {
+    let newArr1 = []
+    let newArr2 = []
+
+    this.#workouts.forEach(function (a) {
+      (a.type === "running") ? newArr1.push(a) : newArr2.push(a)
+    });
+
+    document.querySelectorAll('.workout').forEach(  (a)=>
+      a.remove()
+      )
+    newArr1.sort((a,b) => b.id - a.id)
+    newArr2.sort((a,b) => b.id - a.id)
+
     if (e.target.classList.contains('option__running')) {
-      
-    }
-    
+      this.#workouts = newArr2.concat(newArr1)
+    } else {
+      this.#workouts = newArr1.concat(newArr2)
+    };
+
+    this._drawAllWorkouts()
   }
 
   _deleteWorkout(e) {
@@ -319,6 +340,11 @@ class App {
     if (!e.target.classList.contains('workout__delete')) {
       return;
     }
+
+    if (this.#workouts.length === 2) {
+      document.querySelector('.workout__delete--all').remove()
+      document.querySelector('.dropdown__sort').remove()
+    };
 
     const workoutEl = e.target.closest('.workout');
     const id = workoutEl.getAttribute('data-id')
@@ -351,7 +377,7 @@ class App {
     this.#workouts = []
     this._refreshLocalStorage()
     document.querySelector('.workout__delete--all').remove()
-    document.querySelector('.workout__sort').remove()
+    document.querySelector('.dropdown__sort').remove()
   };
 
   _beginEdit(e) {
@@ -386,7 +412,6 @@ class App {
 
     editEl.addEventListener('change', this._completeEdit.bind(this));
     editEl.addEventListener('submit', this._completeEdit.bind(this));
-    // editEl.addEventListener('change', this._cancelEdit.bind(this));
     editEl.addEventListener('blur', this._cancelEdit.bind(this));
   };
 
@@ -402,13 +427,12 @@ class App {
     const workout = this.#workouts.find(work => work.id === workoutId);
     
     // Check if data is valid
-    if( this._validateFields([+newVal]) === false
-    ) {
+    if (this._validateFields([+newVal]) === false) {
       newVal = e.target.originalValue
       alert('Inputs have to be positive numbers.');
-      this._cancelEdit(e)
+      this._cancelEdit(e);
     };
-    // workoutEl.removeEventListener('blur', this._cancelEdit.bind(this));
+
     // set originalvalue to the new value before cancel edit func runs.
     e.target.originalValue = newVal
 

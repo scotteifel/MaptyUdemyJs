@@ -5,6 +5,7 @@
 
   --color-dark--1: #2d3439;
   --color-dark--2: #42484d;
+
   --color-light--1: #aaa;
   --color-light--2: #ececec;
   --color-light--3: rgb(214, 222, 224);
@@ -200,54 +201,47 @@ margin: 1rem;
 /* Dropdown Sort Menu */
 /* ///////////////// */
 
-/* .workout__sort {
+.dropdown__sort {
+  position: relative;
+  display: block;
   text-align: right;
-  margin-bottom: 5px;
-  margin-right: 5px;
-} */
+}
 
-.dropbtn {
+.btn__sort {
   background-color: var(--color-light--2);
-  padding: 5px;
-  font-size: 12px;
+  color: rgb(49, 49, 49);
+  padding: 3px 5px;
+  margin: 10px;
   border: none;
-  margin: 5px;
+  cursor: pointer;
   border-radius: 5px;
 }
 
-.dropdown {
-  position: relative;
-  display: inline-block;
-  text-align: right;
+.btn__sort:hover, .dropbtn:focus {
+  background-color: #2980B9;
 }
 
-
 .dropdown__content {
-  position: absolute;
   display: none;
+  position: absolute;
   background-color: #f1f1f1;
+  overflow: auto;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
-  margin-left: 82%;
-  border-radius: 1px;
+  left: auto;
+  right: 0;
 }
 
 .dropdown__content a {
   color: black;
   padding: 12px 16px;
   text-decoration: none;
-  z-index: 1;
   display: block;
-  font-size: 15px;
-  font-weight: 200;
 }
 
-.dropdown__content a:hover { background-color: #ddd; }
+.dropdown__sort a:hover {background-color: #ddd;}
 
-.dropdown:hover .dropdown__content { display: block; }
-
-.dropdown:hover .dropbtn { background-color: #81848f; }
-
+.show {display: block;}
 
 .copyright {
   margin-top: auto;
