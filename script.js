@@ -71,7 +71,7 @@ class App {
   #workouts = [];
   #map;
   #mapEvent;
-  #mapZoomLevel = 13;
+  #mapZoomLevel = 14;
   #popups = [];
 
   constructor() {
@@ -106,7 +106,13 @@ class App {
     const coords = [latitude, longitude];
     this.#map = L.map('map').setView(coords, this.#mapZoomLevel);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+    // L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+    //   attribution: '&copy; <a href="https://www.openstreetmap.org/copyr\
+    //   ight">OpenStreetMap</a> contributors'
+    // }).addTo(this.#map);
+
+    // Tile layout above ^^ wasn't rendering properly, so using this one currently.
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyr\
       ight">OpenStreetMap</a> contributors'
     }).addTo(this.#map);
@@ -130,7 +136,7 @@ class App {
     inputDistance.value = inputCadence.value =
     inputElevation.value = inputDuration.value = '';
 
-    // Make the new workout replace the form space instantly and hide the form
+    // New workout replaces the form space instantly / hide the form
     form.style.display = `none`;
     form.classList.add('hidden');
     setTimeout(() => form.style.display = 'grid', 1000);
@@ -300,7 +306,7 @@ class App {
     containerWorkouts.insertAdjacentHTML('afterbegin', htmlSort);
     document.querySelector('.dropdown__content').addEventListener(
       'click', this._sortWorkouts.bind(this), function() {document.querySelector('.dropdown__content').style.display = "block"
-      });
+    });
 
     document.querySelector('.dropdown__sort').addEventListener('click', this.openDropdown)
 
@@ -322,8 +328,8 @@ class App {
     document.querySelectorAll('.workout').forEach(  (a)=>
       a.remove()
       )
-    newArr1.sort((a,b) => b.id - a.id)
-    newArr2.sort((a,b) => b.id - a.id)
+    newArr1.sort((a,b) => a.id - b.id)
+    newArr2.sort((a,b) => a.id - b.id)
 
     if (e.target.classList.contains('option__running')) {
       this.#workouts = newArr2.concat(newArr1)
