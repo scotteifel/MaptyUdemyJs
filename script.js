@@ -1,7 +1,7 @@
 'use strict';
+
 class Workout {
   date = new Date();
-
   id = (Date.now() + '').slice(-10);
   clicks = 1;
 
@@ -10,6 +10,7 @@ class Workout {
     this.distance = distance; // in km
     this.duration = duration; // in min
   };
+
   _setDescription() {
     const months = ['January', 'February', 'March', 'April', 'May', 'June',
       'July', 'August', 'September', 'October', 'November', 'December'];
@@ -25,8 +26,8 @@ class Running extends Workout {
   constructor(coords, distance, duration, cadence) {
     super(coords, distance, duration);
     this.cadence = cadence;
-    this.calcPace();
     this._setDescription();
+    this.calcPace();
   };
 
   calcPace() {
@@ -42,8 +43,8 @@ class Cycling extends Workout {
   constructor(coords, distance, duration, elevationGain) {
     super(coords, distance, duration);
     this.elevation = elevationGain;
-    this.calcSpeed();
     this._setDescription();
+    this.calcSpeed();
   };
 
   calcSpeed() {
@@ -53,9 +54,9 @@ class Cycling extends Workout {
   };
 };
 
-/////////////////////////////
-// APPLICATION ARCHITECURE //
-/////////////////////////////
+   /////////////////////////////
+  // APPLICATION ARCHITECURE //
+ /////////////////////////////
 
 const containerWorkouts = document.querySelector('.workouts');
 const deleteWorkoutButton = document.querySelector('.workout__delete');
@@ -78,19 +79,14 @@ class App {
     // Get the users position
     this._getPosition();
 
-    // Get data from local storage
     this._getLocalStorage();
 
-    // Attach event handlers
     form.addEventListener('submit', this._newWorkout.bind(this));
     inputType.addEventListener('change', this._toggleElevationField);
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
     containerWorkouts.addEventListener('click', this._beginEdit.bind(this));
-    containerWorkouts.addEventListener('click', this._deleteWorkout.bind(this))
+    containerWorkouts.addEventListener('click', this._deleteWorkout.bind(this));
   };
-
-  _allPositive(...inputs) { inputs.every(inp => inp > 0) };
-  _validInputs(...inputs) { inputs.every(inp => Number.isFinite(inp)) };
 
   _getPosition() {
     if (navigator.geolocation)
@@ -111,7 +107,7 @@ class App {
     //   ight">OpenStreetMap</a> contributors'
     // }).addTo(this.#map);
 
-    // Tile layout above ^^ wasn't rendering properly, so using this one currently.
+    // Tile layout above ^^ wasn't rendering properly, so currently using this one.
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyr\
       ight">OpenStreetMap</a> contributors'
@@ -135,7 +131,6 @@ class App {
     // Empty the inputs
     inputDistance.value = inputCadence.value =
     inputElevation.value = inputDuration.value = '';
-
     // New workout replaces the form space instantly / hide the form
     form.style.display = `none`;
     form.classList.add('hidden');
@@ -155,48 +150,38 @@ class App {
 
   _newWorkout(e) {
     e.preventDefault()
-
     // Get data from form
     const type = inputType.value;
     const distance = +inputDistance.value;
     const duration = +inputDuration.value;
     const { lat, lng } = this.#mapEvent.latlng;
     let workout;
-
     // Create a running object
-    if(type === 'running') {
+    if (type === 'running') {
       const cadence = +inputCadence.value;
-
       // Check if data is valid
-      if( this._validateFields([distance,duration,cadence]) === false)
+      if (this._validateFields([distance,duration,cadence]) === false)
         return alert('Inputs have to be positive numbers.');
 
       workout = new Running([lat, lng], distance, duration, cadence);
     };
-
     // Create a cycling object
-    if(type === 'cycling') {
+    if (type === 'cycling') {
       const elevation = +inputElevation.value;
-
       // Check if data is valid
-      if( this._validateFields([distance,duration,elevation]) === false)
+      if (this._validateFields([distance,duration,elevation]) === false)
         return alert('Inputs have to be positive numbers.');
 
       workout = new Cycling([lat, lng], distance, duration, elevation);
     };
-
     // Add new object to workout array
     this.#workouts.push(workout)
-
     // Display the marker
     this._renderWorkoutMarker(workout);
-
     // Render the workout on the list
     this._renderWorkout(workout)
-
     // Clear the input form
     this._hideForm();
-
     // Set local storage to all workouts
     this._setLocalStorage();
   };
@@ -242,7 +227,7 @@ class App {
         </div>
     `;
 
-    if(workout.type === 'running')
+    if(workout.type === 'running') {
           html += `
             <div class="workout__details">
               <span class="workout__icon">⚡️</span>
@@ -260,7 +245,7 @@ class App {
           </li>
           `;
 
-      if(workout.type === 'cycling')
+      } else {
             html += `
             <div class="workout__details">
               <span class="workout__icon">⚡️</span>
@@ -276,8 +261,9 @@ class App {
             </div>
           </li>
             `;
+    };
 
-      this._renderSortAndDeleteButtons()
+      this._renderSortAndDeleteButtons();
       form.insertAdjacentHTML('afterend', html);
   };
 
@@ -308,14 +294,44 @@ class App {
       'click', this._sortWorkouts.bind(this), function() {document.querySelector('.dropdown__content').style.display = "block"
     });
 
-    document.querySelector('.dropdown__sort').addEventListener('click', this.openDropdown)
+    document.querySelector('.dropdown__sort').addEventListener('click', this._openDropdown)
 
     containerWorkouts.insertAdjacentHTML('beforeend', htmlDelete);
     document.querySelector('.btn__delete--all').addEventListener(
       'click', this._deleteAllWorkouts.bind(this));
-    };
 
-    openDropdown = () => document.querySelector(".dropdown__content").classList.toggle("show")
+    //////////////////////////////////////////////////////////
+
+                       //////////////////////
+                      // CODING CHALLENGE //
+                     //////////////////////
+
+    // For tutorial purpose.  Reconstructing the object array from localstorage as a challenge.  Uncomment two lines below to add a button if 2 or more workout objects exist which will rebuild all workouts in local storage and print them to console.
+    
+    // containerWorkouts.insertAdjacentHTML('beforeend', '<div><button class="reconstruct">Reconstruct</button></div>')
+    // document.querySelector('.reconstruct').addEventListener('click', this._reconstructObjects.bind(this))
+
+    ///////////////////////////////////////////////////////
+
+    };
+  
+  // Function is for the coding challenge explained above.
+  _reconstructObjects(e) {
+    const localSWorkouts = JSON.parse(localStorage.workouts);
+    const rebuiltWorkouts = []
+    for (let rep=0; rep < localSWorkouts.length; rep++) {
+      const wO = localSWorkouts[rep];
+      let newWorkout
+      if (wO.type === "running") {newWorkout = new Running([wO.coords], wO.distance, wO.duration, wO.cadence) 
+      } else { newWorkout = new Cycling([wO.coords], wO.distance, wO.duration, wO.elevation)
+      };
+      rebuiltWorkouts.push(newWorkout);
+    };
+  console.log("The workout array built from local storage is ", rebuiltWorkouts);
+  }
+
+  _openDropdown = () => document.querySelector(".dropdown__content").classList.toggle("show")
+
 
   _sortWorkouts(e) {
     let newArr1 = []
@@ -324,13 +340,11 @@ class App {
     this.#workouts.forEach(function (a) {
       (a.type === "running") ? newArr1.push(a) : newArr2.push(a)
     });
-
-    document.querySelectorAll('.workout').forEach(  (a)=>
-      a.remove()
-      )
     newArr1.sort((a,b) => a.id - b.id)
     newArr2.sort((a,b) => a.id - b.id)
 
+    document.querySelectorAll('.workout').forEach(  (a) => a.remove() );
+      
     if (e.target.classList.contains('option__running')) {
       this.#workouts = newArr2.concat(newArr1)
     } else {
@@ -405,8 +419,7 @@ class App {
     };
 
     const html = `
-      <input type=text maxlength=4
-      class="form__edit form__edit--${checkField()}">
+      <input type=text maxlength=4 class="form__edit form__edit--${checkField()}">
     `
 
     field.insertAdjacentHTML('beforebegin', html);
@@ -447,7 +460,6 @@ class App {
       workoutEl.querySelector('.workout__value--distance').textContent = newVal;
 
       } else if (targetClasses.contains('form__edit--time')) {
-
         workout.duration = newVal;
         workoutEl.querySelector('.workout__value--time').textContent = workout.duration;
 
@@ -462,9 +474,10 @@ class App {
         workout.cadence = newVal;
         workoutEl.querySelector('.workout__value--cadence').textContent =
         workout.cadence;
-      };
+    };
 
     if (workout.type === 'running') {
+      console.log(workout);
       workout.pace = workout.duration / workout.distance;
       workoutEl.querySelector('.workout__value--pace').textContent =
         workout.pace.toFixed(1);
@@ -486,19 +499,15 @@ class App {
     const editValue = e.target.originalValue
     const originalValueEl = editEl.parentElement.querySelector('.workout__value')
 
-    // Js uses blur by default twice because it is set in an Event Handler,
-    // the if statement catches it and runs the function properly
-    if (e.relatedTarget || e.target.classList.contains('form__edit')) {
-      if (editValue !== 0) {
-        originalValueEl.textContent = editValue
-        editEl.remove();
-        return;
+    if (editValue !== 0) {
+      originalValueEl.textContent = editValue
+      editEl.remove();
+      return;
 
-      } else {
-        // This resets the original value if edit box is exited while empty
-        originalValueEl.textContent = originalValueEl
-        editEl.remove();
-      };
+    } else {
+      // This resets the original value if edit box is exited while empty
+      originalValueEl.textContent = originalValueEl
+      editEl.remove();
     };
   };
 

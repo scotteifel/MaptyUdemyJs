@@ -1,3 +1,5 @@
 make editting transition smooth
 
 take away .0 from speed to make it a whole number
+
+make new workout form disappear if clicked off of

@@ -187,7 +187,7 @@ margin: 1rem;
 
 .btn__delete--all {
   border-style:none;
-  padding: 3px;
+  padding: 2px 5px;
   background-color: var(--color-light--2);
   text: bold;
   font-size: 12px;
@@ -210,7 +210,7 @@ margin: 1rem;
 .btn__sort {
   background-color: var(--color-light--2);
   color: rgb(49, 49, 49);
-  padding: 3px 5px;
+  padding: 2px 5px;
   margin: 10px;
   border: none;
   cursor: pointer;
