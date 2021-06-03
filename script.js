@@ -74,6 +74,7 @@ class App {
   #mapEvent;
   #mapZoomLevel = 14;
   #popups = [];
+  #mapCoords;
 
   constructor() {
     // Get the users position
@@ -97,10 +98,16 @@ class App {
     };
 
   _loadMap(position) {
+    const computerCoords = [41.488059899999996, -81.7884259]
     const { latitude } = position.coords;
     const { longitude } = position.coords;
-    const coords = [latitude, longitude];
-    this.#map = L.map('map').setView(coords, this.#mapZoomLevel);
+    this.#mapCoords = [latitude, longitude];
+    console.log(this.#mapCoords);
+
+    // For some reason geolocation not pinpointing location correctly, so it's hardcoded in for now.
+
+    this.#map = L.map('map').setView(this.#mapCoords, this.#mapZoomLevel);
+    // this.#map = L.map('map').setView(computerCoords, this.#mapZoomLevel);
 
     // L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
     //   attribution: '&copy; <a href="https://www.openstreetmap.org/copyr\
@@ -119,6 +126,8 @@ class App {
     this.#workouts.forEach(work => {
       this._renderWorkoutMarker(work)
     });
+    this.#map.setView(this.#mapCoords, this.#mapZoomLevel);
+
   };
 
   _showForm(mapE) {
@@ -263,21 +272,28 @@ class App {
             `;
     };
 
-      this._renderSortAndDeleteButtons();
+    // Render the sort, clear all, and show all workouts button.
+      this._renderOptionsButtons();
       form.insertAdjacentHTML('afterend', html);
   };
 
-  _renderSortAndDeleteButtons(e) {
+  // Render the sort, clear all, and show all workouts button.
+  _renderOptionsButtons(e) {
     if(document.querySelector('.dropdown__sort') ||
     document.querySelectorAll('.workout').length < 1) return;
 
-    const htmlSort = `
+    const htmlSortAndShowAll = `
     <div class="dropdown__sort">
       <button class="btn__sort"> Sort </button>
       <div class="dropdown__content">
         <a href="#" class="option__running">Running</a>
         <a href="#" class="option__cycling">Cycling</a>
       </div>
+    </div>
+    <div class="workout__show--all">
+      <button type="button" class="btn__show--all">
+      <span class="tooltip" title="Show all workouts">Show all</span>
+      </button>
     </div>
     `;
 
@@ -289,12 +305,14 @@ class App {
     </div>
     `;
 
-    containerWorkouts.insertAdjacentHTML('afterbegin', htmlSort);
+    containerWorkouts.insertAdjacentHTML('afterbegin', htmlSortAndShowAll);
     document.querySelector('.dropdown__content').addEventListener(
       'click', this._sortWorkouts.bind(this), function() {document.querySelector('.dropdown__content').style.display = "block"
-    });
-
+    });    
     document.querySelector('.dropdown__sort').addEventListener('click', this._openDropdown)
+    
+    document.querySelector('.btn__show--all').addEventListener(
+      'click', this._showAllWorkouts.bind(this));
 
     containerWorkouts.insertAdjacentHTML('beforeend', htmlDelete);
     document.querySelector('.btn__delete--all').addEventListener(
@@ -309,7 +327,7 @@ class App {
     // For tutorial purpose.  Reconstructing the object array from localstorage as a challenge.  Uncomment two lines below to add a button if 2 or more workout objects exist which will rebuild all workouts in local storage and print them to console.
     
     // containerWorkouts.insertAdjacentHTML('beforeend', '<div><button class="reconstruct">Reconstruct</button></div>')
-    // document.querySelector('.reconstruct').addEventListener('click', this._reconstructObjects.bind(this))
+    // document.querySelector('.reconstruct').addEventListener('click', this._showAllWorkouts.bind(this))
 
     ///////////////////////////////////////////////////////
 
@@ -330,8 +348,17 @@ class App {
   console.log("The workout array built from local storage is ", rebuiltWorkouts);
   }
 
-  _openDropdown = () => document.querySelector(".dropdown__content").classList.toggle("show")
+  _showAllWorkouts(e) {
+    const boundsArr = [] 
+    for (let rep=0; rep < this.#popups.length; rep++) { 
+      boundsArr.push(this.#popups[rep]._latlng)
+    };
+    console.log(boundsArr);
+    let group =  L.latLngBounds(boundsArr)
+    this.#map.fitBounds(group)
+  }
 
+  _openDropdown = () => document.querySelector(".dropdown__content").classList.toggle("show")
 
   _sortWorkouts(e) {
     let newArr1 = []
