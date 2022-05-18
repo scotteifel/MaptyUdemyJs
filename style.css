@@ -69,7 +69,8 @@ a:visited { color: var(--color-brand--1) }
   margin-bottom: 1.75rem;
   cursor: pointer;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  /* grid-template-columns: 1fr 1fr 1fr 1fr; */
+  grid-template-columns: 1fr 1fr;
   gap: 0.75rem 1.5rem;
 }
 
@@ -289,12 +290,13 @@ margin: 1rem;
   .sidebar {
     width: 60%;
     flex-basis: 0%;
-    padding: 3px;
+    padding: 0px;
 
   }
 
   .workout {
     padding: 7px 0px;
+    
   }
 
   body {
