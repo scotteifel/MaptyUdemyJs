@@ -298,8 +298,7 @@ margin: 1rem;
   }
 
   body {
-    font-size: 60%;
-    font-weight: 100;
+    padding: 0px;
   }
 
   .form {
