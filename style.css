@@ -288,7 +288,7 @@ margin: 1rem;
 @media only screen and (max-width: 600px) {
 
   .sidebar {
-    width: 60%;
+    width: 68%;
     flex-basis: 0%;
     padding: 0px;
 
