@@ -287,7 +287,7 @@ margin: 1rem;
 @media only screen and (max-width: 600px) {
 
   .sidebar {
-    width: 70%;
+    width: 60%;
     flex-basis: 0%;
     padding: 3px;
 
@@ -304,6 +304,7 @@ margin: 1rem;
 
   .form {
     gap: 0.75rem 1rem;
+    padding: 7px;
   }
 
   .workout__title {
@@ -314,7 +315,11 @@ margin: 1rem;
     margin-right: 10px;
   }
 
+  .workout__icon {
+    margin: 0px;
+  }
+
   .workout {
-    gap: 0.57rem .8rem;
+    gap: 0.57rem .3rem;
   }
 }
