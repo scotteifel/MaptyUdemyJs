@@ -190,7 +190,7 @@ margin: 1rem;
   border-style:none;
   padding: 2px 5px;
   background-color: var(--color-light--2);
-  text: bold;
+  text-decoration: bold;
   font-size: 12px;
   font-family: Open Sans, sans-serif;
   border-radius: 5px;
@@ -288,10 +288,9 @@ margin: 1rem;
 @media only screen and (max-width: 600px) {
 
   .sidebar {
-    width: 68%;
+    width: 320px;
     flex-basis: 0%;
     padding: 0px;
-
   }
 
   .workout {
